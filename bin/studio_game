@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/studio_game/game'
+require_relative '../lib/studio_game/clumsy_player'
+require_relative '../lib/studio_game/berserk_player'
+
+davies = StudioGame::Game.new("Davies")
+
+default_player_file = File.join(File.dirname(__FILE__), 'players.csv')
+davies.load_players(ARGV.shift || default_player_file)
+
+klutz = StudioGame::ClumsyPlayer.new("klutz")
+davies.add_player(klutz)
+berserker = StudioGame::BerserkPlayer.new("berserker")
+davies.add_player(berserker)
+
+loop do
+  puts "How many game rounds? ('quit' to exit)"
+  answer = gets.chomp.downcase
+  case answer
+  when /^\d+$/
+    davies.play(answer.to_i)
+  when "quit", "exit"
+    davies.print_stats
+    break
+  else
+    puts "Please enter a number or 'quit'."
+  end
+end
+
+davies.save_high_scores
+
